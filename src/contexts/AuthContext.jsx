@@ -1,7 +1,8 @@
-
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import {
+
+
     GoogleAuthProvider,
     signInWithPopup,
     signOut,
@@ -11,12 +12,12 @@ import { auth, database } from '../config/firebase';
 import { ref, set, get } from 'firebase/database';
 // Removed useNavigate to avoid circular dependency with Router
 import magentoApi from '../services/magentoService';
-import { USER_ROLES, createDefaultUserLicense, initializeFirebaseDefaults } from '../config/firebaseDefaults';
+import { USER_ROLES, createDefaultUserLicense } from '../config/firebaseDefaults';
 import firebaseSyncService from '../services/firebaseSyncService';
 import LicenseManager from '../services/LicenseManager';
 import PermissionService from '../services/PermissionService';
+
 const AuthContext = createContext();
-const MAGENTO_API_URL = import.meta.env.VITE_MAGENTO_API_URL;
 
 export const useAuth = () => {
     return useContext(AuthContext);
@@ -39,37 +40,8 @@ export const AuthProvider = ({ children }) => {
     const [adminToken, setMagentoToken] = useState(() => localStorage.getItem('adminToken'));
     const [isUsingLocalData, setIsUsingLocalData] = useState(false);
 
-    // Helper functions for settings management with local cache priority
-    const initializeUserSettings = useCallback(async (user) => {
-        try {
-            const sanitizedUserId = user.uid.replace(/[.#$\[\]]/g, '_');
-            const userSettingsKey = `userSettings_${sanitizedUserId}`;
-            
-            // Use unified settings manager
-            const { getUserSettings } = await import('../utils/unifiedSettingsManager');
-            const userSettings = getUserSettings(sanitizedUserId);
-            if (userSettings) {
-                console.log('User settings loaded from local cache');
-                
-                // Minimal sync to Firebase only if cache is old (> 24 hours)
-                const lastSync = new Date(userSettings.lastSync || 0);
-                const now = new Date();
-                const hoursSinceSync = (now - lastSync) / (1000 * 60 * 60);
-                
-                if (hoursSinceSync > 24) {
-                    syncSettingsToFirebase(user, userSettings);
-                }
-            } else {
-                // If no local cache, try to fetch from Firebase
-                await loadSettingsFromFirebase(user);
-            }
-        } catch (error) {
-            console.error('Error initializing user settings:', error);
-        }
-    }, []);
-    
     // Sync settings to Firebase (minimal)
-    const syncSettingsToFirebase = async (user, settings) => {
+    const syncSettingsToFirebase = useCallback(async (user, settings) => {
         try {
             const sanitizedUserId = user.uid.replace(/[.#$\[\]]/g, '_');
             const settingsRef = ref(database, `userSettings/${sanitizedUserId}`);
@@ -91,10 +63,10 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('Error syncing settings to Firebase:', error);
         }
-    };
+    }, []);
     
     // Load settings from Firebase
-    const loadSettingsFromFirebase = async (user) => {
+    const loadSettingsFromFirebase = useCallback(async (user) => {
         try {
             const sanitizedUserId = user.uid.replace(/[.#$\[\]]/g, '_');
             const settingsRef = ref(database, `userSettings/${sanitizedUserId}`);
@@ -102,7 +74,6 @@ export const AuthProvider = ({ children }) => {
             
             if (snapshot.exists()) {
                 const firebaseSettings = snapshot.val();
-                const userSettingsKey = `userSettings_${sanitizedUserId}`;
                 
                 // Save through unified settings manager
                 const { saveUserSettings } = await import('../utils/unifiedSettingsManager');
@@ -113,7 +84,35 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('Error loading settings from Firebase:', error);
         }
-    };
+    }, []);
+    
+    // Helper functions for settings management with local cache priority
+    const initializeUserSettings = useCallback(async (user) => {
+        try {
+            const sanitizedUserId = user.uid.replace(/[.#$\[\]]/g, '_');
+            
+            // Use unified settings manager
+            const { getUserSettings } = await import('../utils/unifiedSettingsManager');
+            const userSettings = await getUserSettings(sanitizedUserId);
+            if (userSettings) {
+                console.log('User settings loaded from local cache');
+
+                // Minimal sync to Firebase only if cache is old (> 24 hours)
+                const lastSync = new Date(userSettings.lastSync || 0);
+                const now = new Date();
+                const hoursSinceSync = (now - lastSync) / (1000 * 60 * 60);
+
+                if (hoursSinceSync > 24) {
+                    await syncSettingsToFirebase(user, userSettings);
+                }
+            } else {
+                // If no local cache, try to fetch from Firebase
+                await loadSettingsFromFirebase(user);
+            }
+        } catch (error) {
+            console.error('Error initializing user settings:', error);
+        }
+    }, [syncSettingsToFirebase, loadSettingsFromFirebase]);
     
     // Save settings (always local first, sync later)
     const saveUserSettings = useCallback((settings) => {
@@ -244,7 +243,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const response =   await magentoApi.get('/store/storeConfigs')
+            const response = await magentoApi.get('/store/storeConfigs');
 
             if (!response.ok) {
                 if (response.status === 401) {
@@ -274,7 +273,6 @@ export const AuthProvider = ({ children }) => {
 
     const signInWithGoogle = async () => {
         try {
-              
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({
                 prompt: 'select_account'
@@ -295,15 +293,13 @@ export const AuthProvider = ({ children }) => {
     const signInWithMagento = async (username, password) => {
         try {
             const response = await magentoApi.login(username, password);
- debugger
- 
 
             const magentoUser = {
                 uid: username,
                 email: username,
                 displayName: username,
                 isMagentoUser: true,
-                token:response
+                token: response
             };
 
             setCurrentUser(magentoUser);
