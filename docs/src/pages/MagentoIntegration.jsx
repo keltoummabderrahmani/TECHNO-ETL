@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+
   Container,
   Typography,
   Box,
@@ -39,21 +40,21 @@ import {
   Info as InfoIcon
 } from '@mui/icons-material';
 
-const MagentoIntegration = () => {
+  // const MagentoIntegration = () => { // Unused variable
   const [tabValue, setTabValue] = useState(0);
   const [copiedText, setCopiedText] = useState('');
 
-  const handleTabChange = (event, newValue) => {
+  // const handleTabChange = (event, newValue) => { // Unused variable
     setTabValue(newValue);
   };
 
-  const copyToClipboard = (text, label) => {
+  // const copyToClipboard = (text, label) => { // Unused variable
     navigator.clipboard.writeText(text);
     setCopiedText(label);
     setTimeout(() => setCopiedText(''), 2000);
   };
 
-  const containerVariants = {
+  // const containerVariants = { // Unused variable
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -63,7 +64,7 @@ const MagentoIntegration = () => {
     }
   };
 
-  const itemVariants = {
+  // const itemVariants = { // Unused variable
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -71,7 +72,7 @@ const MagentoIntegration = () => {
     }
   };
 
-  const integrationFeatures = [
+  // const integrationFeatures = [ // Unused variable
     {
       title: 'Product Synchronization',
       description: 'Bidirectional sync of product data, attributes, and media',
@@ -98,7 +99,7 @@ const MagentoIntegration = () => {
     }
   ];
 
-  const apiEndpoints = [
+  // const apiEndpoints = [ // Unused variable
     {
       method: 'GET',
       endpoint: '/rest/V1/products',
@@ -523,10 +524,10 @@ curl -X GET \\
               language="javascript"
               code={`
 // Example: Product Sync with Magento
-const axios = require('axios');
+  // const axios = require('axios'); // Unused variable
 
 async function syncProducts() {
-  const config = {
+  // const config = { // Unused variable
     baseURL: 'https://your-store.com/rest/V1',
     headers: {
       'Authorization': \`Bearer \${process.env.MAGENTO_ACCESS_TOKEN}\`,
@@ -536,7 +537,7 @@ async function syncProducts() {
 
   try {
     // Fetch products from Magento
-    const response = await axios.get('/products', config);
+  // const response = await axios.get('/products', config); // Unused variable
     
     // Process each product
     for (const product of response.data.items) {

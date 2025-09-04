@@ -1,8 +1,9 @@
+import React, { useState, useCallback, useEffect, useMemo } from&apos;react';
+import { Box, Chip } from '@mui/material';
+import {
+
 // StandardGridTemplate - Template for all child grids
 // This template provides a consistent structure for all grid components
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Box, Chip, Typography } from '@mui/material';
-import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
@@ -11,7 +12,7 @@ import {
   Sync as SyncIcon
 } from '@mui/icons-material';
 import UnifiedGrid from '../../common/UnifiedGrid';
-import { toast } from 'react-toastify';
+import { toast } from&apos;react-toastify';
 
 /**
  * StandardGridTemplate - Template for consistent grid structure
@@ -31,7 +32,7 @@ import { toast } from 'react-toastify';
  * 12. Return JSX
  */
 
-const StandardGridTemplate = () => {
+  // const StandardGridTemplate = () => { // Unused variable
   // ===== 1. STATE MANAGEMENT =====
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -53,13 +54,13 @@ const StandardGridTemplate = () => {
     setLoading(true);
     try {
       // Replace with actual API call
-      const response = await apiService.getData();
+  // const response = await apiService.getData(); // Unused variable
       setData(response.data || []);
       
       // Calculate stats
-      const total = response.data?.length || 0;
-      const active = response.data?.filter(item => item.status === 'active').length || 0;
-      const inactive = total - active;
+  // const total = response.data?.length || 0; // Unused variable
+  // const active = response.data?.filter(item => item.status === 'active').length || 0; // Unused variable
+  // const inactive = total - active; // Unused variable
       
       setStats({ total, active, inactive });
     } catch (error) {
@@ -157,7 +158,7 @@ const StandardGridTemplate = () => {
   ], []);
 
   // ===== 5. TOOLBAR CONFIGURATION =====
-  const toolbarConfig = {
+  // const toolbarConfig = { // Unused variable
     showRefresh: true,
     showAdd: true,
     showEdit: true,
@@ -171,7 +172,7 @@ const StandardGridTemplate = () => {
     size: 'medium'
   };
 
-  const customActions = [
+  // const customActions = [ // Unused variable
     {
       label: 'Add New',
       onClick: handleAdd,
@@ -189,7 +190,7 @@ const StandardGridTemplate = () => {
   ];
 
   // ===== 6. CONTEXT MENU ACTIONS =====
-  const contextMenuActions = {
+  // const contextMenuActions = { // Unused variable
     view: {
       label: 'View Details',
       icon: <ViewIcon />,
@@ -215,7 +216,7 @@ const StandardGridTemplate = () => {
   };
 
   // ===== 7. STATS CARDS =====
-  const statusCards = [
+  // const statusCards = [ // Unused variable
     {
       title: 'Total Records',
       value: stats.total,
@@ -237,7 +238,7 @@ const StandardGridTemplate = () => {
   ];
 
   // ===== 8. FILTER OPTIONS =====
-  const filterOptions = [
+  // const filterOptions = [ // Unused variable
     { key: 'all', label: 'All Records', value: 'all' },
     { key: 'active', label: 'Active Only', value: 'active' },
     { key: 'inactive', label: 'Inactive Only', value: 'inactive' }
@@ -252,8 +253,7 @@ const StandardGridTemplate = () => {
   return (
     <Box sx={{ height: '100%', width: '100%' }}>
       <UnifiedGrid
-        gridName="StandardGrid"
-        columns={columns}
+        gridName="StandardGrid&quot;columns={columns}
         data={data}
         loading={loading}
         
@@ -270,8 +270,7 @@ const StandardGridTemplate = () => {
         // View options
         showStatsCards={true}
         showCardView={true}
-        defaultViewMode="grid"
-        gridCards={statusCards}
+        defaultViewMode="grid&quot;gridCards={statusCards}
         totalCount={stats.total}
         defaultPageSize={25}
         

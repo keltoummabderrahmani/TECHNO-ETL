@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+
   Dialog,
   DialogTitle,
   DialogContent,
@@ -29,7 +30,8 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
   ArrowUpward as ArrowUpwardIcon,
-  ArrowDownward as ArrowDownwardIcon
+  ArrowDownward as ArrowDownwardIcon,
+  ArrowRight as ArrowRightIcon
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import categoryService from '../../services/categoryService';
@@ -86,7 +88,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
       try {
         // Get all categories except current one and its children
         const allCategories = categoryService.getAllCategories();
-        const filteredCategories = allCategories.filter(cat => 
+        const filteredCategories = allCategories.filter(cat =>
           cat.id !== formData.id && 
           // Don't include children of current category as potential parents
           !cat.path?.includes(`${formData.name} >`)
@@ -140,8 +142,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
     <Dialog 
       open={open} 
       onClose={onClose} 
-      maxWidth="md" 
-      fullWidth
+      maxWidth="md" fullWidth
       PaperProps={{
         sx: {
           borderRadius: 2,
@@ -171,8 +172,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
                 {index > 0 && <ArrowRightIcon fontSize="small" color="action" />}
                 <Chip 
                   label={item.name} 
-                  size="small" 
-                  variant={index === breadcrumb.length - 1 ? "filled" : "outlined"}
+                  size="small" variant={index === breadcrumb.length - 1 ? "filled" : "outlined"}
                   color={index === breadcrumb.length - 1 ? "primary" : "default"}
                 />
               </React.Fragment>
@@ -191,9 +191,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Category Name"
-              name="name"
-              value={formData.name}
+              label="Category Name" name="name" value={formData.name}
               onChange={handleChange}
               required
               error={!formData.name.trim()}
@@ -205,8 +203,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
             <FormControl fullWidth>
               <InputLabel>Parent Category</InputLabel>
               <Select
-                name="parent_id"
-                value={formData.parent_id}
+                name="parent_id" value={formData.parent_id}
                 onChange={handleChange}
                 label="Parent Category"
               >
@@ -225,10 +222,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Position"
-              name="position"
-              type="number"
-              value={formData.position}
+              label="Position" name="position" type="number" value={formData.position}
               onChange={handleChange}
               InputProps={{ inputProps: { min: 0 } }}
             />
@@ -241,8 +235,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
                   <Switch
                     checked={formData.is_active}
                     onChange={handleChange}
-                    name="is_active"
-                    color="success"
+                    name="is_active" color="success"
                   />
                 }
                 label="Active"
@@ -253,8 +246,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
                   <Switch
                     checked={formData.include_in_menu}
                     onChange={handleChange}
-                    name="include_in_menu"
-                    color="primary"
+                    name="include_in_menu" color="primary"
                   />
                 }
                 label="Include in Menu"
@@ -265,9 +257,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Description"
-              name="description"
-              value={formData.description}
+              label="Description" name="description" value={formData.description}
               onChange={handleChange}
               multiline
               rows={3}
@@ -285,9 +275,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Meta Title"
-              name="meta_title"
-              value={formData.meta_title}
+              label="Meta Title" name="meta_title" value={formData.meta_title}
               onChange={handleChange}
             />
           </Grid>
@@ -295,9 +283,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Meta Keywords"
-              name="meta_keywords"
-              value={formData.meta_keywords}
+              label="Meta Keywords" name="meta_keywords" value={formData.meta_keywords}
               onChange={handleChange}
               multiline
               rows={2}
@@ -307,9 +293,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Meta Description"
-              name="meta_description"
-              value={formData.meta_description}
+              label="Meta Description" name="meta_description" value={formData.meta_description}
               onChange={handleChange}
               multiline
               rows={3}
@@ -333,9 +317,7 @@ const CategoryEditDialog = ({ open, onClose, category, onSave }) => {
         
         <Button 
           onClick={handleSave}
-          variant="contained"
-          color="primary"
-          startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+          variant="contained" color="primary" startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
           disabled={loading || !formData.name.trim()}
         >
           Save Category

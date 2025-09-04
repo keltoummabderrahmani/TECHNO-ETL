@@ -1,3 +1,5 @@
+
+
 /**
  * Base Components Barrel Export
  * 
@@ -44,7 +46,6 @@ export const createDataGrid = (config = {}) => {
     enableStats: true,
     enableActions: true
   };
-  
   return {
     ...defaultConfig,
     ...config
@@ -62,7 +63,6 @@ export const createToolbar = (actions = [], config = {}) => {
     size: 'medium',
     spacing: 1
   };
-  
   return {
     ...defaultConfig,
     customActions: actions,
@@ -79,7 +79,6 @@ export const createFormDialog = (fields = [], config = {}) => {
     maxWidth: 'sm',
     fullWidth: true
   };
-  
   return {
     ...defaultConfig,
     fields,
@@ -95,11 +94,9 @@ export const createStatsCards = (stats = {}, config = {}) => {
     variant: 'stats',
     loading: false
   };
-  
   return {
     ...defaultConfig,
     stats,
-    config,
     ...config
   };
 };
@@ -202,8 +199,7 @@ export const GRID_PRESETS = {
  * Utility function to apply preset configuration
  */
 export const applyGridPreset = (preset, overrides = {}) => {
-  const presetConfig = GRID_PRESETS[preset] || GRID_PRESETS.crud;
-  
+// const presetConfig = GRID_PRESETS[preset] || GRID_PRESETS.crud; // Unused - commented out
   return {
     ...presetConfig,
     ...overrides,

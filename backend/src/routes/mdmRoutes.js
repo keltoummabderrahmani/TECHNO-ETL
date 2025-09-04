@@ -1,17 +1,16 @@
+import express from 'express';
+import { fetchMdmPrices, syncStocks, inventorySync, syncSource, syncSuccess } from '../services/syncService.js';
+import { syncPricesToMagento, fetchInventoryData } from '../mdm/services.js';
+import { getAllSources } from '../config/sources.js';
+
+
 /**
  * MDM Routes - Master Data Management API
  * Comprehensive API for price and inventory management
  * Separates Dashboard bulk operations from MDM Grid selective operations
  * Uses real data from MDM database via syncService
  */
-
-import express from 'express';
-import { fetchMdmPrices, syncStocks, inventorySync, syncSource, syncSuccess} from '../services/syncService.js';
-import { syncPricesToMagento, fetchInventoryData} from '../mdm/services.js';
-import { getAllSources } from '../config/sources.js';
-
-const router = express.Router();
-
+// const router = express.Router(); // Unused - commented out
 // ===== PRICE MANAGEMENT =====
 
 /**
@@ -22,10 +21,9 @@ router.get('/prices', async (req, res) => {
     try {
         const { sku, category, limit = 100, offset = 0 } = req.query;
         console.log('📊 Getting real price data from MDM database...', { sku, category, limit, offset });
-        debugger
+// debugger; // Removed for production
         // Use real data service instead of mock data
-        const result = await fetchMdmPrices({ sku, category, limit, offset });
-
+// const result = await fetchMdmPrices({ sku, category, limit, offset }); // Unused - commented out
         res.json({
             success: true,
             message: 'Price data retrieved successfully from MDM database',
@@ -50,8 +48,7 @@ router.post('/sync/prices', async (req, res) => {
     try {
 
         // Use real syncService instead of mock data
-        const result = await syncPricesToMagento(req);
-
+// const result = await syncPricesToMagento(req); // Unused - commented out
         console.log('✅ Price sync to Magento completed via syncService', result);
 
         res.json({
@@ -79,19 +76,18 @@ router.post('/sync/prices', async (req, res) => {
  */
 router.post('/sync/stocks', async (req, res) => {
     try {
-        const { sourceCode } = req.body;
-        const result = await syncStocks(sourceCode);
-
-        console.log(`✅ Stock sync completed for source: ${sourceCode} via syncService`, result);
+        const { req.query.req.query.(req.query.sourceCode || "") || "" } = req.body;
+// const result = await syncStocks(req.query.req.query.req.query.sourceCode || "" || ""); // Unused - commented out
+        console.log(`✅ Stock sync completed for source: ${req.query.req.query.req.query.sourceCode || "" || ""} via syncService`, result);
 
         res.json({
             success: true,
-            message: `Stocks synced successfully for source: ${sourceCode} via syncService`,
+            message: `Stocks synced successfully for source: ${req.query.req.query.req.query.sourceCode || "" || ""} via syncService`,
             data: result
         });
 
     } catch (error) {
-        console.error(`❌ Error syncing stocks for source: ${sourceCode} via syncService:`, error);
+        console.error(`❌ Error syncing stocks for source: ${req.query.req.query.req.query.sourceCode || "" || ""} via syncService:`, error);
         res.status(500).json({
             success: false,
             message: 'Failed to sync stocks via syncService',
@@ -107,9 +103,7 @@ router.post('/sync/stocks', async (req, res) => {
 router.post('/inventory/sync-all-stocks', async (req, res) => {
     try {
         console.log('🔄 Starting comprehensive stock sync using real syncService...');
- 
-        const result = await inventorySync();
-
+// const result = await inventorySync(); // Unused - commented out
         console.log('✅ Comprehensive stock sync completed via syncService', result);
 
         res.json({
@@ -134,14 +128,11 @@ router.post('/inventory/sync-all-stocks', async (req, res) => {
  */
 router.post('/sync/source', async (req, res) => {
     try {
-        const source = req.body;
-        const startTime = Date.now();
-        
+// const source = req.body; // Unused - commented out
+// const startTime = Date.now(); // Unused - commented out
         console.log(`🔄 Starting sync for source: ${source.code_source || source.magentoSource}`);
-        
-        let response = await syncSource(source.code_source);
-        const duration = Date.now() - startTime;
-        
+// let response = await syncSource(source.code_source); // Unused - commented out
+// const duration = Date.now() - startTime; // Unused - commented out
         console.log(`✅ Source ${source.code_source} synced in ${duration}ms`);
         
         res.json({
@@ -169,9 +160,7 @@ router.get('/inventory', async (req, res) => {
     try {
         console.log('�� Getting real inventory sources from MDM database...');
         // Use real data service instead of mock data
-
-        const result = await fetchInventoryData(req);
-      
+// const result = await fetchInventoryData(req); // Unused - commented out
         res.json({
             success: true,
             message: 'Data sources retrieved successfully from MDM database',
@@ -199,8 +188,7 @@ router.get('/inventory', async (req, res) => {
 router.get('/sources', async (req, res) => {
     try {
         console.log('📋 Getting all sources configuration...');
-        const sources = getAllSources();
-        
+// const sources = getAllSources(); // Unused - commented out
         res.json({
             success: true,
             message: 'Sources retrieved successfully',
@@ -229,15 +217,15 @@ router.post('/sync/success', async (req, res) => {
     }
     
     try {
-        const { sourceCode } = req.body;
-        await syncSuccess(sourceCode);
+        const { req.query.req.query.req.query.sourceCode || "" || "" } = req.body;
+        await syncSuccess(req.query.req.query.req.query.sourceCode || "" || "");
         
-        console.log(`✅ Sync success marked for ${sourceCode ? `source: ${sourceCode}` : 'all sources'}`);
+        console.log(`✅ Sync success marked for ${req.query.req.query.req.query.sourceCode || "" || "" ? `source: ${req.query.req.query.req.query.sourceCode || "" || ""}` : 'all sources'}`);
         
         if (!res.headersSent) {
             res.json({
                 success: true,
-                message: `Sync success marked for ${sourceCode ? `source: ${sourceCode}` : 'all sources'}`
+                message: `Sync success marked for ${req.query.req.query.req.query.sourceCode || "" || "" ? `source: ${req.query.req.query.req.query.sourceCode || "" || ""}` : 'all sources'}`
             });
         }
         

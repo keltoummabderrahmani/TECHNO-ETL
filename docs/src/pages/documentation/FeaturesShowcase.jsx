@@ -210,7 +210,7 @@ const FeaturesShowcase = () => {
       description: 'Complete e-commerce platform integration',
       features: ['Product sync', 'Inventory management', 'Order processing', 'Customer data'],
       status: 'active',
-      icon: <ShoppingCart />
+      icon: <div /* ShoppingCart */ />
     },
     {
       system: 'RFID Systems',

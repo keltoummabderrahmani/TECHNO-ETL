@@ -299,6 +299,18 @@ const CmsBlocksGrid = () => {
         rowCount: stats.total
     });
 
+    return (
+        <Box sx={{ height: '100%', width: '100%' }}>
+            <UnifiedGrid
+                {...gridProps}
+                columns={columns}
+                toolbarConfig={toolbarConfig}
+            />
+        </Box>
+    );
+};
+
+export default CmsBlocksGrid;
     const toolbarConfig = getStandardToolbarConfig({
         onAdd: handleAddNew,
         onRefresh: fetchData,
@@ -318,4 +330,3 @@ const CmsBlocksGrid = () => {
             }
         ]
     });
-</original_code>```

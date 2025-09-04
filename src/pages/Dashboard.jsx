@@ -85,7 +85,7 @@ import {
 } from '../components/charts';
 
 // Import dashboard data service
-import unifiedMagentoService from '../services/unifiedMagentoService';
+import magentoService from '../services/magentoService';
 import SyncProgressBar from '../components/SyncProgressBar';
 
 /**
@@ -231,11 +231,15 @@ const Dashboard = () => {
     try {
         setEnhancedLoading(true);
         const cacheKey = 'enhancedDashboardData';
-        const cachedData = unifiedMagentoService._getCachedResponse(cacheKey);
+        // Check local storage for cached data
+        const cachedData = localStorage.getItem(cacheKey);
+        const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
+        const cacheAge = cacheTimestamp ? Date.now() - parseInt(cacheTimestamp) : Infinity;
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-        if (cachedData) {
+        if (cachedData && cacheAge < CACHE_DURATION) {
             console.log('Loaded enhanced data from cache');
-            setEnhancedData(cachedData);
+            setEnhancedData(JSON.parse(cachedData));
         } else {
             // Use Promise.allSettled to handle failed endpoints gracefully
             const endpoints = [
@@ -250,7 +254,7 @@ const Dashboard = () => {
             
             const responses = await Promise.allSettled(
                 endpoints.map(endpoint => 
-                    unifiedMagentoService.get(endpoint).catch(error => {
+                    magentoService.get(endpoint).catch(error => {
                         console.warn(`Endpoint ${endpoint} failed:`, error.message);
                         return { data: null };
                     })
@@ -268,7 +272,8 @@ const Dashboard = () => {
             };
             
             setEnhancedData(data);
-            unifiedMagentoService._setCachedResponse(cacheKey, data);
+            localStorage.setItem(cacheKey, JSON.stringify(data));
+            localStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
             console.log('Stored enhanced data to cache');
         }
     } catch (error) {

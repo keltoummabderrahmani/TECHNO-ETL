@@ -4,9 +4,9 @@ import '@testing-library/jest-dom';
 import BaseGrid from '../BaseGrid';
 
 // Mock child components
-jest.mock('../CustomGridToolbar', () => {
-    return function MockCustomGridToolbar() {
-        return <div data-testid="custom-grid-toolbar">CustomGridToolbar</div>;
+jest.mock('../UnifiedGridToolbar', () => {
+    return function MockUnifiedGridToolbar() {
+        return <div data-testid="unified-grid-toolbar">UnifiedGridToolbar</div>;
     };
 });
 

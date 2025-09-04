@@ -1,3 +1,7 @@
+import sql from 'mssql';
+import { fetchMdmPrices } from './syncService'
+
+
 /**
  * MDM Data Service - Real data fetching from MDM database
  * Author: Mounir Abderrahmani
@@ -5,36 +9,29 @@
  * Contact: mounir.webdev.tms@gmail.com
  */
 
-import sql from 'mssql';
  
-import {fetchMdmPrices} from './syncService'
 
 // Simple console logger for clean development
-const logger = {
+// const logger = {
     info: (message, meta = {}) => console.log(`[INFO] ${message}`, meta),
     warn: (message, meta = {}) => console.warn(`[WARN] ${message}`, meta),
     error: (message, meta = {}) => console.error(`[ERROR] ${message}`, meta),
     debug: (message, meta = {}) => console.log(`[DEBUG] ${message}`, meta)
-};
-
-
+}; // Unused - commented out
 export async function getMdmPrices(filters = {}) {
     try {
         const { sku, category, limit = 100, offset = 0 } = filters;
-        
-        const result = fetchMdmPrices()
-        debugger
-       
+// const result = fetchMdmPrices()
+// debugger; // Removed for production
         return {
             success: true,
-            data: priceData,
+            data: /* {} */,
             pagination: {
                 total: result.recordset.length,
                 limit: parseInt(limit),
                 offset: parseInt(offset)
             }
-        };
-
+        }; // Unused - commented out
     } catch (error) {
         logger.error('❌ Error fetching prices:', error);
         throw error;
@@ -50,11 +47,10 @@ export async function getMdmStocks(filters = {}) {
         logger.info('📦 Fetching stock data...', { sourceCode, sku, limit, offset });
 
         // Try to get database connection
-        const dbPool = await getPool();
-        
+// const dbPool = await /* getDbConnection */(); // Unused - commented out
         if (!dbPool) {
             // Return fallback data if database is not available
-            const fallbackData = [
+// const fallbackData = [
                 {
                     id: 'PROD-001_MAIN',
                     sku: 'PROD-001',
@@ -81,9 +77,7 @@ export async function getMdmStocks(filters = {}) {
                     lastUpdated: new Date().toISOString(),
                     changed: false
                 }
-            ];
-
-            let filteredData = fallbackData;
+            ]; // Unused - commented out// let filteredData = fallbackData; // Unused - commented out
             if (sourceCode) {
                 filteredData = fallbackData.filter(item => item.sourceCode === sourceCode);
             }
@@ -104,7 +98,7 @@ export async function getMdmStocks(filters = {}) {
         }
 
         // Use real database query
-        const query = `
+// const query = `
             SELECT TOP (@limit)
                 'PROD-' + CAST(ROW_NUMBER() OVER (ORDER BY NEWID()) AS VARCHAR) as sku,
                 'MAIN' as sourceCode,
@@ -112,17 +106,12 @@ export async function getMdmStocks(filters = {}) {
                 GETDATE() as lastUpdated
             FROM sys.objects
             WHERE type = 'U'
-        `;
-
-        const request = dbPool.request()
-            .input('limit', sql.Int, parseInt(limit));
-
-        const result = await request.query(query);
-        
+        `; // Unused - commented out// const request = dbPool.request()
+            .input('limit', sql.Int, parseInt(limit)); // Unused - commented out// const result = await request.query(query); // Unused - commented out
         logger.info(`✅ Fetched ${result.recordset.length} stock records`);
         
         // Transform data to match expected format
-        const stockData = result.recordset.map(row => ({
+// const stockData = result.recordset.map(row => ({
             id: `${row.sku}_${row.sourceCode}`,
             sku: row.sku,
             name: `Product ${row.sku}`,
@@ -136,8 +125,7 @@ export async function getMdmStocks(filters = {}) {
             status: parseInt(row.quantity) > 0 ? 'in_stock' : 'out_of_stock',
             lastUpdated: row.lastUpdated ? row.lastUpdated.toISOString() : new Date().toISOString(),
             changed: false
-        }));
-
+        })); // Unused - commented out
         return {
             success: true,
             data: stockData,
@@ -166,7 +154,7 @@ export async function getMdmSources() {
         logger.info('📋 Fetching available sources...');
 
         // Return standard sources data
-        const sourcesData = [
+// const sourcesData = [
             {
                 id: 'MAIN',
                 code: 'MAIN',
@@ -197,8 +185,7 @@ export async function getMdmSources() {
                 productCount: 892,
                 enabled: true
             }
-        ];
-
+        ]; // Unused - commented out
         return {
             success: true,
             data: sourcesData

@@ -743,7 +743,7 @@ PRINT 'TECHNO-ETL Database setup completed successfully!';`;
                 <AccordionDetails>
                   <Alert severity="warning" sx={{ mb: 2 }}>
                     <Typography variant="subtitle2" fontWeight={600}>Security Notice:</Typography>
-                    Replace all placeholder values (${VARIABLE_NAME}) with actual secure values. 
+                    Replace all placeholder values (${"VARIABLE_NAME"}) with actual secure values. 
                     Never commit production secrets to version control.
                   </Alert>
                   

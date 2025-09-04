@@ -37,7 +37,7 @@ class SQLQueryBuilder {
                             condition = `${filter.field} LIKE @${key}`;
                             inputs[key] = { type: this.getSQLType(value), value: `%${value}%` };
                             break;
-                        case 'in':
+                        case 'in': {
                             const inValues = value.split(',');
                             const inParams = inValues.map((v, i) => `@${key}_${i}`).join(',');
                             condition = `${filter.field} IN (${inParams})`;
@@ -45,6 +45,7 @@ class SQLQueryBuilder {
                                 inputs[`${key}_${i}`] = { type: this.getSQLType(v), value: v };
                             });
                             break;
+                        }
                         case 'gt':
                             condition = `${filter.field} > @${key}`;
                             break;

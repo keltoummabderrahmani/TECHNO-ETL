@@ -1,13 +1,15 @@
+import sql from 'mssql';
+import { getDbConnection } from '../config/database.js';
+import logger from '../utils/logger.js';
+
+
 // noinspection Annotator
 
-/**
+/*/
  * Voting Service - Professional SQL-based voting system
  * Handles all voting operations with MDM database integration
  */
 
-import sql from 'mssql';
-import { getDbConnection } from '../config/database.js';
-import logger from '../utils/logger.js';
 
 class VotingService {
   constructor() {
@@ -18,7 +20,7 @@ class VotingService {
     this.settingsTable = 'voting_settings';
   }
 
-  /**
+  /*/
    * Get all voting features with pagination and filtering
    */
   async getFeatures(options = {}) {
@@ -32,14 +34,7 @@ class VotingService {
         sortBy = 'vote_count',
         sortOrder = 'DESC',
         search = null
-      } = options;
-
-      const pool = await getDbConnection();
-      const offset = (page - 1) * pageSize;
-
-      let whereClause = 'WHERE vf.is_active = 1';
-      const params = [];
-
+      } = options;// const pool = await getDbConnection(); // Unused - commented out// const offset = (page - 1) * pageSize; // Unused - commented out// let whereClause = 'WHERE vf.is_active = 1'; // Unused - commented out// const params = []; // Unused - commented out
       if (category) {
         whereClause += ' AND vf.category_id = @category';
         params.push({ name: 'category', type: sql.Int, value: category });
@@ -58,9 +53,7 @@ class VotingService {
       if (search) {
         whereClause += ' AND (vf.title LIKE @search OR vf.description LIKE @search)';
         params.push({ name: 'search', type: sql.NVarChar, value: `%${search}%` });
-      }
-
-      const query = `
+      }// const query = `
         SELECT 
           vf.*,
           vc.name as category_name,
@@ -73,16 +66,12 @@ class VotingService {
         ORDER BY ${this.getSortColumn(sortBy)} ${sortOrder}
         OFFSET @offset ROWS
         FETCH NEXT @pageSize ROWS ONLY
-      `;
-
-      const countQuery = `
+      `; // Unused - commented out// const countQuery = `
         SELECT COUNT(*) as total
         FROM ${this.tableName} vf
         JOIN ${this.categoriesTable} vc ON vf.category_id = vc.id
         ${whereClause}
-      `;
-
-      const request = pool.request();
+      `; // Unused - commented out// const request = pool.request(); // Unused - commented out
       params.forEach(param => {
         request.input(param.name, param.type, param.value);
       });
@@ -108,15 +97,11 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Get feature by ID with detailed information
    */
   async getFeatureById(id) {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      const query = `
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// const query = `
         SELECT 
           vf.*,
           vc.name as category_name,
@@ -125,11 +110,8 @@ class VotingService {
         FROM ${this.tableName} vf
         JOIN ${this.categoriesTable} vc ON vf.category_id = vc.id
         WHERE vf.id = @id AND vf.is_active = 1
-      `;
-
-      request.input('id', sql.Int, id);
-      const result = await request.query(query);
-
+      `; // Unused - commented out
+      request.input('id', sql.Int, id);// const result = await request.query(query); // Unused - commented out
       if (result.recordset.length === 0) {
         throw new Error('Feature not found');
       }
@@ -141,15 +123,11 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Create new voting feature
    */
   async createFeature(featureData, userId) {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      const query = `
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// const query = `
         INSERT INTO ${this.tableName} (
           title, description, category_id, priority, status, complexity,
           estimated_hours, business_value, technical_requirements, created_by
@@ -159,8 +137,7 @@ class VotingService {
           @title, @description, @category_id, @priority, @status, @complexity,
           @estimated_hours, @business_value, @technical_requirements, @created_by
         )
-      `;
-
+      `; // Unused - commented out
       request.input('title', sql.NVarChar, featureData.title);
       request.input('description', sql.NVarChar, featureData.description);
       request.input('category_id', sql.Int, featureData.category_id);
@@ -170,9 +147,7 @@ class VotingService {
       request.input('estimated_hours', sql.Int, featureData.estimated_hours);
       request.input('business_value', sql.NVarChar, featureData.business_value);
       request.input('technical_requirements', sql.NVarChar, featureData.technical_requirements);
-      request.input('created_by', sql.NVarChar, userId);
-
-      const result = await request.query(query);
+      request.input('created_by', sql.NVarChar, userId);// const result = await request.query(query); // Unused - commented out
       return result.recordset[0];
 
     } catch (error) {
@@ -181,17 +156,11 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Update voting feature
    */
   async updateFeature(id, featureData, userId) {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      const updateFields = [];
-      const params = [{ name: 'id', type: sql.Int, value: id }];
-
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// const updateFields = []; // Unused - commented out// const params = [{ name: 'id', type: sql.Int, value: id }]; // Unused - commented out
       // Build dynamic update query
       Object.keys(featureData).forEach(key => {
         if (featureData[key] !== undefined) {
@@ -206,20 +175,15 @@ class VotingService {
 
       updateFields.push('updated_by = @updated_by');
       updateFields.push('updated_at = GETDATE()');
-      params.push({ name: 'updated_by', type: sql.NVarChar, value: userId });
-
-      const query = `
+      params.push({ name: 'updated_by', type: sql.NVarChar, value: userId });// const query = `
         UPDATE ${this.tableName}
         SET ${updateFields.join(', ')}
         OUTPUT INSERTED.*
         WHERE id = @id
-      `;
-
+      `; // Unused - commented out
       params.forEach(param => {
         request.input(param.name, param.type, param.value);
-      });
-
-      const result = await request.query(query);
+      });// const result = await request.query(query); // Unused - commented out
       return result.recordset[0];
 
     } catch (error) {
@@ -228,16 +192,12 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Vote for a feature
    */
   async voteForFeature(featureId, userId, userEmail, userName, voteType = 'upvote') {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      // Use MERGE to handle upsert operation
-      const query = `
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out
+      // Use MERGE to handle upsert operation// const query = `
         MERGE ${this.votesTable} AS target
         USING (SELECT @feature_id as feature_id, @user_id as user_id) AS source
         ON target.feature_id = source.feature_id AND target.user_id = source.user_id
@@ -246,16 +206,14 @@ class VotingService {
         WHEN NOT MATCHED THEN
           INSERT (feature_id, user_id, user_email, user_name, vote_type)
           VALUES (@feature_id, @user_id, @user_email, @user_name, @vote_type)
-        OUTPUT $action, INSERTED.*;
+        OUTPUT $action, INSERTED.*; // Unused - commented out
       `;
 
       request.input('feature_id', sql.Int, featureId);
       request.input('user_id', sql.NVarChar, userId);
       request.input('user_email', sql.NVarChar, userEmail);
       request.input('user_name', sql.NVarChar, userName);
-      request.input('vote_type', sql.NVarChar, voteType);
-
-      const result = await request.query(query);
+      request.input('vote_type', sql.NVarChar, voteType);// const result = await request.query(query); // Unused - commented out
       return result.recordset[0];
 
     } catch (error) {
@@ -264,19 +222,14 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Remove vote from feature
    */
   async removeVote(featureId, userId) {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      const query = `
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// const query = `
         DELETE FROM ${this.votesTable}
         WHERE feature_id = @feature_id AND user_id = @user_id
-      `;
-
+      `; // Unused - commented out
       request.input('feature_id', sql.Int, featureId);
       request.input('user_id', sql.NVarChar, userId);
 
@@ -289,15 +242,11 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Get user votes for features
    */
   async getUserVotes(userId, featureIds = null) {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      let whereClause = 'WHERE user_id = @user_id';
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// let whereClause = 'WHERE user_id = @user_id'; // Unused - commented out
       request.input('user_id', sql.NVarChar, userId);
 
       if (featureIds && featureIds.length > 0) {
@@ -305,15 +254,11 @@ class VotingService {
         featureIds.forEach((id, index) => {
           request.input(`fid${index}`, sql.Int, id);
         });
-      }
-
-      const query = `
+      }// const query = `
         SELECT feature_id, vote_type, created_at
         FROM ${this.votesTable}
         ${whereClause}
-      `;
-
-      const result = await request.query(query);
+      `; // Unused - commented out// const result = await request.query(query); // Unused - commented out
       return result.recordset;
 
     } catch (error) {
@@ -322,22 +267,16 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Get voting categories
    */
   async getCategories() {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      const query = `
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// const query = `
         SELECT *
         FROM ${this.categoriesTable}
         WHERE is_active = 1
         ORDER BY sort_order, name
-      `;
-
-      const result = await request.query(query);
+      `; // Unused - commented out// const result = await request.query(query); // Unused - commented out
       return result.recordset;
 
     } catch (error) {
@@ -346,15 +285,11 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Get voting statistics
    */
   async getVotingStats() {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      const result = await request.execute('sp_GetVotingStats');
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// const result = await request.execute('sp_GetVotingStats'); // Unused - commented out
       return result.recordset;
 
     } catch (error) {
@@ -363,59 +298,49 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Helper method to get SQL column for sorting
    */
-  getSortColumn(sortBy) {
-    const sortColumns = {
+  getSortColumn(sortBy) {// const sortColumns = {
       'vote_count': 'vf.vote_count',
       'created_at': 'vf.created_at',
       'updated_at': 'vf.updated_at',
       'title': 'vf.title',
       'priority': 'vf.priority',
       'status': 'vf.status'
-    };
+    }; // Unused - commented out
     return sortColumns[sortBy] || 'vf.vote_count';
   }
 
-  /**
+  /*/
    * Helper method to get SQL type for parameters
    */
-  getSqlType(fieldName) {
-    const typeMap = {
+  getSqlType(fieldName) {// const typeMap = {
       'category_id': sql.Int,
       'estimated_hours': sql.Int,
       'vote_count': sql.Int,
       'is_active': sql.Bit
-    };
+    }; // Unused - commented out
     return typeMap[fieldName] || sql.NVarChar;
   }
-}
 
-  /**
+  /*/
    * Add comment to feature
    */
   async addComment(featureId, userId, userName, userEmail, comment, isAdminResponse = false) {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      const query = `
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// const query = `
         INSERT INTO ${this.commentsTable} (
           feature_id, user_id, user_name, user_email, comment, is_admin_response
         )
         OUTPUT INSERTED.*
         VALUES (@feature_id, @user_id, @user_name, @user_email, @comment, @is_admin_response)
-      `;
-
+      `; // Unused - commented out
       request.input('feature_id', sql.Int, featureId);
       request.input('user_id', sql.NVarChar, userId);
       request.input('user_name', sql.NVarChar, userName);
       request.input('user_email', sql.NVarChar, userEmail);
       request.input('comment', sql.NVarChar, comment);
-      request.input('is_admin_response', sql.Bit, isAdminResponse);
-
-      const result = await request.query(query);
+      request.input('is_admin_response', sql.Bit, isAdminResponse);// const result = await request.query(query); // Unused - commented out
       return result.recordset[0];
 
     } catch (error) {
@@ -424,23 +349,17 @@ class VotingService {
     }
   }
 
-  /**
+  /*/
    * Get comments for feature
    */
   async getFeatureComments(featureId) {
-    try {
-      const pool = await getDbConnection();
-      const request = pool.request();
-
-      const query = `
+    try {// const pool = await getDbConnection(); // Unused - commented out// const request = pool.request(); // Unused - commented out// const query = `
         SELECT *
         FROM ${this.commentsTable}
         WHERE feature_id = @feature_id AND is_approved = 1
         ORDER BY created_at ASC
-      `;
-
-      request.input('feature_id', sql.Int, featureId);
-      const result = await request.query(query);
+      `; // Unused - commented out
+      request.input('feature_id', sql.Int, featureId);// const result = await request.query(query); // Unused - commented out
       return result.recordset;
 
     } catch (error) {

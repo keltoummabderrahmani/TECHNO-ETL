@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
+
     Box, Button, Card, CardContent,
     Typography, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow,
@@ -199,7 +200,7 @@ const LicenseManagement = () => {
     const renderMenuPermissions = () => {
         if (!selectedUser) return null;
         
-        const isLocalhost = window.location.hostname === 'localhost';
+  // const isLocalhost = window.location.hostname === 'localhost'; // Unused variable
         
         return (
             <Card sx={{ mt: 2 }}>
@@ -238,24 +239,21 @@ const LicenseManagement = () => {
                                                     <Box display="flex" gap={1}>
                                                         <Tooltip title="Can Read">
                                                             <Switch
-                                                                size="small"
-                                                                checked={isLocalhost || selectedUser.canRead}
+                                                                size="small" checked={isLocalhost || selectedUser.canRead}
                                                                 onChange={(e) => handleLicenseChange(selectedUser.uid, { canRead: e.target.checked })}
                                                                 disabled={isLocalhost}
                                                             />
                                                         </Tooltip>
                                                         <Tooltip title="Can Edit">
                                                             <Switch
-                                                                size="small"
-                                                                checked={isLocalhost || selectedUser.canEdit}
+                                                                size="small" checked={isLocalhost || selectedUser.canEdit}
                                                                 onChange={(e) => handleLicenseChange(selectedUser.uid, { canEdit: e.target.checked })}
                                                                 disabled={isLocalhost}
                                                             />
                                                         </Tooltip>
                                                         <Tooltip title="Can Delete">
                                                             <Switch
-                                                                size="small"
-                                                                checked={isLocalhost || selectedUser.canDelete}
+                                                                size="small" checked={isLocalhost || selectedUser.canDelete}
                                                                 onChange={(e) => handleLicenseChange(selectedUser.uid, { canDelete: e.target.checked })}
                                                                 disabled={isLocalhost}
                                                             />
@@ -320,7 +318,7 @@ const LicenseManagement = () => {
                                                     <Typography variant="body2">
                                                         {user.displayName || user.email}
                                                     </Typography>
-                                                    <Typography variant="caption" color="text.secondary">
+                                    <Typography variant="caption" color="text.secondary">
                                                         {user.email} • {user.role}
                                                     </Typography>
                                                 </Box>
@@ -344,7 +342,7 @@ const LicenseManagement = () => {
                                         {users.map(user => (
                                             <TableRow key={user.uid}>
                                                 <TableCell>
-                                                    <Box display="flex" alignItems="center" gap={1}>
+                                    <Box display="flex" alignItems="center" gap={1}>
                                                         <Avatar sx={{ width: 24, height: 24 }}>
                                                             {user.role === 'admin' ? <AdminIcon /> : <PersonIcon />}
                                                         </Avatar>
@@ -352,7 +350,7 @@ const LicenseManagement = () => {
                                                             <Typography variant="body2">
                                                                 {user.displayName || 'No Name'}
                                                             </Typography>
-                                                            <Typography variant="caption" color="text.secondary">
+                                            <Typography variant="caption" color="text.secondary">
                                                                 {user.email}
                                                             </Typography>
                                                         </Box>

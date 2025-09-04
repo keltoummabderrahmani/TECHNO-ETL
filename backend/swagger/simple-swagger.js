@@ -606,9 +606,9 @@ const options = {
           }
         }
       },
-      '/api/magento/categories': {
+      '/api/magento/categories/tree': {
         get: {
-          summary: 'Get categories from Magento',
+          summary: 'Get categories tree from Magento',
           description: 'Proxy request to Magento REST API /rest/V1/categories. This endpoint mirrors the official Magento categories API as documented in Magento\'s REST API documentation.',
           tags: ['Magento Proxy - Categories'],
           responses: {

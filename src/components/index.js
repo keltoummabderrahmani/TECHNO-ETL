@@ -8,6 +8,8 @@
  * @version 2.0.0
  */
 
+import React from 'react';
+
 // ============================================================================
 // BASE COMPONENTS
 // ============================================================================
@@ -212,11 +214,10 @@ export const getComponent = (name) => {
  * These can be imported directly to avoid loading unnecessary code
  */
 
-// Base components (always loaded)
-export { BaseGrid, BaseToolbar, BaseDialog, BaseCard };
+// Base components (already exported above)
 
 // Common utilities (lightweight)
-export { UnifiedGrid, TooltipWrapper };
+export { TooltipWrapper };
 
 /**
  * Create lazy-loaded grid component
@@ -231,8 +232,6 @@ export const createLazyGrid = (importFn, fallback) => {
 // ============================================================================
 // DEFAULT EXPORT
 // ============================================================================
-
-import React from 'react';
 
 export default {
   // Base components

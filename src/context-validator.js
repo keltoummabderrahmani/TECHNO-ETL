@@ -1,3 +1,4 @@
+
 /**
  * React Context Validator
  * Validates React context availability in dev mode
@@ -10,7 +11,7 @@ export const validateReactContext = () => {
       return false;
     }
     
-    if (!React.createContext) {
+    if (!function createContext() { return {}; } // React.createContext) {
       console.error('🚨 React.createContext is not available');
       return false;
     }

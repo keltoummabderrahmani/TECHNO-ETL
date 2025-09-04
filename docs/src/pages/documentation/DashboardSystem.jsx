@@ -239,7 +239,7 @@ const DashboardSystem = () => {
               <Typography variant="h6" gutterBottom color="primary.main">
                 Dashboard Component Hierarchy
               </Typography>
-              <Paper sx={{ p: 2, backgroundColor: '#f5f5f5', overflow: 'auto' }}>
+              <div /* Paper */ sx={{ p: 2, backgroundColor: '#f5f5f5', overflow: 'auto' }}>
                 <pre style={{ fontSize: '0.875rem', margin: 0, whiteSpace: 'pre-wrap' }}>
 {`Dashboard.jsx
 ├── StatCards/
@@ -264,7 +264,7 @@ const DashboardSystem = () => {
     ├── WidgetConfig.jsx
     └── WidgetLibrary.jsx`}
                 </pre>
-              </Paper>
+              </div> /* /Paper */
             </CardContent>
           </Card>
         </motion.div>

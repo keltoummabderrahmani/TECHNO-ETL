@@ -1,7 +1,7 @@
  
 import BaseApiService from './BaseApiService';
-import unifiedMagentoService from './unifiedMagentoService';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 import { getMagentoApiParams, handleMagentoGridError } from '../utils/magentoGridSettingsManager';
 
 // Import local data
@@ -133,15 +133,18 @@ class MagentoApi extends BaseApiService {
     });
     
     this.baseURL = API_URL;
-    this.unifiedService = unifiedMagentoService;
+    this.axiosInstance = axios.create({
+      baseURL: this.baseURL,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 
   // Get product media gallery by SKU (uses backend proxy)
   async getProductMedia(sku) {
     try {
-      // Use unifiedMagentoService to ensure proxy and token usage
-      const response = await unifiedMagentoService.get(`/products/${sku}/media`);
-      // unifiedMagentoService returns { data: ... }
+      const response = await this.axiosInstance.get(`/products/${sku}/media`);
       return response?.data || [];
     } catch (error) {
       console.error('Failed to fetch product media:', error);
@@ -153,7 +156,7 @@ class MagentoApi extends BaseApiService {
   async createProduct(productData) {
     try {
       const payload = { product: productData };
-      const response = await unifiedMagentoService.post('/products', payload);
+      const response = await this.axiosInstance.post('/products', payload);
       // Clear cache after creating a product to ensure lists are updated
       this.clearCache();
       return response.data;
@@ -178,7 +181,7 @@ class MagentoApi extends BaseApiService {
       try {
         // We don't use this.createProduct here to avoid the double toast on error
         const payload = { product: productData };
-        const createdProduct = await unifiedMagentoService.post('/products', payload);
+        const createdProduct = await this.axiosInstance.post('/products', payload);
         results.success.push(createdProduct.data);
         toast.update(toastId, { render: `Successfully created ${productData.sku}`, type: 'success', isLoading: false, autoClose: 5000 });
       } catch (error) {
@@ -199,7 +202,8 @@ class MagentoApi extends BaseApiService {
       throw new Error('Base URL cannot be empty');
     }
     this.baseURL = newBaseURL;
-    // Note: unifiedMagentoService doesn't expose setBaseURL method
+    // Update axios instance with new base URL
+    this.axiosInstance.defaults.baseURL = newBaseURL;
   }
 
   getBaseURL() {
@@ -233,10 +237,10 @@ class MagentoApi extends BaseApiService {
     return super._setCachedResponse(key, data);
   }
 
-  // API Methods with error handling and caching - using unified service
+  // API Methods with error handling and caching - using axios instance
   async get(endpoint, config = {}) {
     try { 
-      const response = await unifiedMagentoService.get(endpoint, config);
+      const response = await this.axiosInstance.get(endpoint, config);
       return response;
     } catch (error) {
       // If there's an error and we have local data available, use it
@@ -250,7 +254,7 @@ class MagentoApi extends BaseApiService {
 
   async post(endpoint, data = {}, config = {}) {
     try {
-      const response = await unifiedMagentoService.post(endpoint, data, config);
+      const response = await this.axiosInstance.post(endpoint, data, config);
       return response;
     } catch (error) {
       throw error;
@@ -259,7 +263,7 @@ class MagentoApi extends BaseApiService {
 
   async put(endpoint, data = {}, config = {}) {
     try {
-      const response = await unifiedMagentoService.put(endpoint, data, config);
+      const response = await this.axiosInstance.put(endpoint, data, config);
       return response;
     } catch (error) {
       throw error;
@@ -268,7 +272,7 @@ class MagentoApi extends BaseApiService {
 
   async delete(endpoint, config = {}) {
     try {
-      const response = await unifiedMagentoService.delete(endpoint, config);
+      const response = await this.axiosInstance.delete(endpoint, config);
       return response;
     } catch (error) {
       throw error;

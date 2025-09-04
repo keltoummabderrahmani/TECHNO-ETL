@@ -184,9 +184,12 @@ const updateApiServicesSettings = (apiSettings) => {
   
   try {
     // Dynamically import and update services
-    import('../services/unifiedMagentoService').then(({ default: unifiedMagentoService }) => {
+    import('../services/magentoService').then(({ default: magentoService }) => {
       if (apiSettings.magento) {
-        unifiedMagentoService.initializeMagento(apiSettings.magento);
+        // Initialize magento service with new settings if it has the method
+        if (magentoService.initialize) {
+          magentoService.initialize(apiSettings.magento);
+        }
       }
     }).catch(error => {
       console.warn('Failed to update Magento service settings:', error);

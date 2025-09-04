@@ -4,79 +4,52 @@ import {
   Link,
   Typography,
   Box,
-  Chip,
   useTheme
 } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import { useBreadcrumbs } from '../../hooks/useNavigation';
 
-const routeLabels = {
-  dashboard: 'Dashboard',
-  products: 'Products',
-  charts: 'Charts & Analytics',
-  voting: 'Voting System',
-  inventory: 'Inventory',
-  orders: 'Orders',
-  customers: 'Customers',
-  reports: 'Reports',
-  settings: 'Settings'
-};
-
 const Breadcrumbs = () => {
   const theme = useTheme();
   const { breadcrumbs, navigateToBreadcrumb } = useBreadcrumbs();
 
   // Don't show breadcrumbs if there's only one item or none
-  if (breadcrumbs.length <= 1) {
+  if (!breadcrumbs || breadcrumbs.length <= 1) {
     return null;
   }
 
   return (
-    <Box sx={{ mb: 2, px: 1 }}>
+    <Box sx={{ mb: 2 }}>
       <MuiBreadcrumbs
         separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb"
         sx={{
-          '& .MuiBreadcrumbs-separator': {
-            color: 'text.secondary',
-            mx: 1
-          },
           '& .MuiBreadcrumbs-ol': {
             alignItems: 'center'
           }
         }}
       >
         {breadcrumbs.map((breadcrumb, index) => {
-          const isLast = breadcrumb.isActive;
+          const isLast = breadcrumb?.isActive || index === breadcrumbs.length - 1;
           const isFirst = index === 0;
 
           if (isLast) {
             return (
-              <Chip
-                key={breadcrumb.path}
-                label={breadcrumb.label}
-                size="small"
-                variant="filled"
-                color="primary"
-                sx={{
-                  fontWeight: 600,
-                  fontSize: '0.75rem',
-                  height: 24
-                }}
-              />
+              <Typography key={index} color="text.primary" sx={{ display: 'flex', alignItems: 'center' }}>
+                {isFirst && <HomeIcon fontSize="small" sx={{ mr: 0.5 }} />}
+                {breadcrumb?.label}
+              </Typography>
             );
           }
 
           return (
             <Link
-              key={breadcrumb.path}
+              key={index}
               component="button"
-              variant="body2"
+              underline="hover"
               onClick={() => navigateToBreadcrumb(breadcrumb)}
               sx={{
-                display: 'flex',
-                alignItems: 'center',
                 color: 'text.secondary',
                 textDecoration: 'none',
                 border: 'none',
@@ -85,6 +58,8 @@ const Breadcrumbs = () => {
                 padding: '4px 8px',
                 borderRadius: 1,
                 fontSize: '0.875rem',
+                display: 'flex',
+                alignItems: 'center',
                 transition: theme.transitions.create(['color', 'background-color']),
                 '&:hover': {
                   color: 'primary.main',
@@ -92,8 +67,8 @@ const Breadcrumbs = () => {
                 }
               }}
             >
-              {isFirst && <HomeIcon sx={{ mr: 0.5, fontSize: 16 }} />}
-              {breadcrumb.label}
+              {isFirst && <HomeIcon fontSize="small" sx={{ mr: 0.5 }} />}
+              {breadcrumb?.label}
             </Link>
           );
         })}

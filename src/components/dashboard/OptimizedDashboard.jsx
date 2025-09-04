@@ -41,7 +41,7 @@ import {
 } from 'recharts';
 import { usePerformanceMonitor } from '../../hooks/usePerformanceMonitor';
 import { useOptimizedContext } from '../../utils/contextOptimization';
-import { processGridRows, generateOptimizedColumns } from '../../utils/optimizedGridUtils';
+// Removed import of optimizedGridUtils as it was consolidated
 
 // Memoized dashboard components
 const MemoizedStatsCards = memo(StatsCards);
@@ -78,18 +78,9 @@ const OptimizedDashboard = () => {
     return performance.trackExpensiveCalculation(
       'processDashboardData',
       (data) => ({
-        salesData: processGridRows(data.sales || [], {
-          revenue: (value) => parseFloat(value),
-          growth: (value) => parseFloat(value)
-        }),
-        inventoryData: processGridRows(data.inventory || [], {
-          stock: (value) => parseInt(value),
-          price: (value) => parseFloat(value)
-        }),
-        customerData: processGridRows(data.customers || [], {
-          orders: (value) => parseInt(value),
-          value: (value) => parseFloat(value)
-        })
+        salesData: data.sales ? data.sales.map((item, index) => ({ ...item, id: item.id || index })) : [],
+        inventoryData: data.inventory ? data.inventory.map((item, index) => ({ ...item, id: item.id || index })) : [],
+        customerData: data.customers ? data.customers.map((item, index) => ({ ...item, id: item.id || index })) : []
       }),
       dashboardData
     );
@@ -360,13 +351,13 @@ const OptimizedDashboard = () => {
                           fill="#8884d8"
                           dataKey="value"
                           nameKey="name"
-                          label={({ name, percent }) => \`\${name}: \${(percent * 100).toFixed(0)}%\`}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                         >
                           {processedData.customerData.map((entry, index) => (
-                            <Cell key={`cell-\${index}`} fill={chartColors[index % chartColors.length]} />
+                            <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
                           ))}
                         </Pie>
-                        <RechartsTooltip formatter={(value) => [\`$\${value.toFixed(2)}\`, t('dashboard.value')]} />
+                        <RechartsTooltip formatter={(value) => [`$${value.toFixed(2)}`, t('dashboard.value')]} />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>

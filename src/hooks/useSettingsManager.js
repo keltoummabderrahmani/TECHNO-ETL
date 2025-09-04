@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import settingsManager from '../utils/SettingsManager';
+import settingsManager from '../utils/unifiedSettingsManager';
 import { useAuth } from '../contexts/AuthContext';
 
 export const useSettingsManager = (pageId = null) => {

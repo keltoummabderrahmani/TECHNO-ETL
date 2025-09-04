@@ -302,7 +302,7 @@ export async function proxyMagentoRequest(req, res) {
             case "delete":
                 response = await magentoService.delete(endpoint);
                 break;
-            default:
+            default: {
                 const methodError = new Error(`Method not allowed: ${method}`);
                 methodError.status = 405;
 
@@ -325,6 +325,7 @@ export async function proxyMagentoRequest(req, res) {
                     correlationId: requestId,
                     timestamp: new Date().toISOString()
                 });
+            }
         }
 
         const responseTime = Date.now() - startTime;
