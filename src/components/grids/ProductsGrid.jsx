@@ -111,7 +111,16 @@ const getStockStatus = (stock) => {
 };
 
 const ProductsGrid = ({ data, onDataChange, onBadgeUpdate }) => {
-  const { t } = useTranslation();
+  // Safe translation hook with fallback
+  let t;
+  try {
+    const { t: translation } = useTranslation();
+    t = translation;
+  } catch (error) {
+    // Fallback if translation is not available
+    t = (key) => key;
+  }
+  
   const [products, setProducts] = useState(mockProducts);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);

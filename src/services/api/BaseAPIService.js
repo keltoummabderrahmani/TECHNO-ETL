@@ -181,9 +181,10 @@ class BaseAPIService {
      */
     getAuthHeaders(authConfig) {
         switch (authConfig.type) {
-            case 'basic':
+            case 'basic': {
                 const credentials = btoa(`${authConfig.username}:${authConfig.password}`);
                 return { 'Authorization': `Basic ${credentials}` };
+            }
                 
             case 'bearer':
                 return { 'Authorization': `Bearer ${authConfig.token}` };

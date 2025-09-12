@@ -17,12 +17,7 @@ export { default as BaseDialog } from './BaseDialog';
 export { default as BaseCard } from './BaseCard';
 
 // Re-export common component patterns for convenience
-export {
-  BaseGrid as Grid,
-  BaseToolbar as Toolbar,
-  BaseDialog as Dialog,
-  BaseCard as Card
-} from './index';
+// Aliases for common usage patterns
 
 /**
  * Type definitions are available in types.ts

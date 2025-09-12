@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Paper, Alert, Typography, Chip, Box } from '@mui/material';
 import { motion } from 'framer-motion';
 import { People } from '@mui/icons-material';
-import CustomersGrid from '../components/grids/CustomersGrid';
+import CustomersGrid from '../components/grids/magento/CustomersGrid';
 import { useDashboardParams } from '../hooks/useHashParams';
 
 const CustomersPage = () => {

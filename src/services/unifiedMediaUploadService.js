@@ -93,9 +93,7 @@ export const parseCSVFile = (file, mode = 'basic') => {
           return result;
         };
         
-        const lines = csv.split(/
-?
-/).filter(line => line.trim());
+        const lines = csvText.split(/\r?\n/).filter(line => line.trim());
         
         if (lines.length < 2) {
           reject(new Error('CSV file must have at least a header and one data row'));

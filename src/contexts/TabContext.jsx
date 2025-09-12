@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Alert, Snackbar } from '@mui/material';
+import { Box, Alert, Snackbar, Typography } from '@mui/material';
 import { MENU_ITEMS } from '../components/Layout/MenuTree.js';
 import { usePermissions } from './PermissionContext.jsx';
 
@@ -73,34 +73,63 @@ const TAB_TO_URL_MAP = Object.fromEntries(
 
 export { TAB_TO_URL_MAP };
 
-// Component mapping
+// Create fallback component for missing components
+const createFallbackComponent = (componentName) => {
+    const FallbackComponent = () => (
+        <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto' }}>
+                <Typography variant="h6" gutterBottom>
+                    {componentName} Component
+                </Typography>
+                <Typography variant="body2">
+                    This component is being developed. Please check back later.
+                </Typography>
+            </Alert>
+        </Box>
+    );
+    FallbackComponent.displayName = `${componentName}Fallback`;
+    return FallbackComponent;
+};
+
+// Safe component wrapper that handles loading errors
+const createSafeComponent = (importFn, componentName) => {
+    return lazy(() => 
+        importFn()
+            .catch(error => {
+                console.warn(`Failed to load ${componentName}:`, error.message);
+                return { default: createFallbackComponent(componentName) };
+            })
+    );
+};
+
+// Component mapping with safe loading
 const COMPONENT_MAP = {
-    Dashboard: Dashboard,
-    Charts: ChartsPage,
-    Voting: VotingPage,
-    ProductsGrid: ProductsGrid,
-    ProductCatalog: ProductManagementPage,
-    MDMProductsGrid: MDMProductsGrid,
-    CustomersGrid: CustomersGrid,
-    OrdersGrid: OrdersGrid,
-    InvoicesGrid: InvoicesGrid,
-    CategoryTree: CategoryTree,
-    CategoryManagementGrid: CategoryManagementGrid,
-    StocksGrid: StocksGrid,
-    SourcesGrid: SourcesGrid,
-    CegidProductsGrid: CegidGrid,
-    CmsPageGrid: CmsPageGrid,
-    GridTestPage: GridTestPage,
-    BugBounty: BugBountyPage,
-    LicenseManagement: LicenseManagement,
-    LicenseStatus: LicenseStatus,
-    SalesAnalytics: SalesAnalytics,
-    InventoryAnalytics: InventoryAnalytics,
-    SecureVault: SecureVault,
-    AccessControl: AccessControl,
-    MDMStockGrid: MDMStockGrid,
-    MDMSources: MDMSources,
-    UserProfile: UserProfile
+    Dashboard: createSafeComponent(() => import('../pages/DashboardSimplified.jsx'), 'Dashboard'),
+    Charts: createSafeComponent(() => import('../pages/ChartsPage.jsx'), 'Charts'),
+    Voting: createSafeComponent(() => import('../pages/VotingPage.jsx'), 'Voting'),
+    ProductsGrid: createSafeComponent(() => import('../components/grids/magento/ProductsGrid.jsx'), 'ProductsGrid'),
+    ProductCatalog: createSafeComponent(() => import('../pages/ProductManagementPageSimplified.jsx'), 'ProductCatalog'),
+    MDMProductsGrid: createSafeComponent(() => import('../components/grids/MDMProductsGrid/MDMProductsGrid.jsx'), 'MDMProductsGrid'),
+    CustomersGrid: createSafeComponent(() => import('../components/grids/magento/CustomersGrid.jsx'), 'CustomersGrid'),
+    OrdersGrid: createSafeComponent(() => import('../components/grids/magento/OrdersGrid.jsx'), 'OrdersGrid'),
+    InvoicesGrid: createSafeComponent(() => import('../components/grids/magento/InvoicesGrid.jsx'), 'InvoicesGrid'),
+    CategoryTree: createSafeComponent(() => import('../components/grids/magento/CategoryGrid.jsx'), 'CategoryTree'),
+    CategoryManagementGrid: createSafeComponent(() => import('../components/grids/magento/CategoryManagementGrid.jsx'), 'CategoryManagementGrid'),
+    StocksGrid: createSafeComponent(() => import('../components/grids/magento/StocksGrid.jsx'), 'StocksGrid'),
+    SourcesGrid: createSafeComponent(() => import('../components/grids/magento/SourcesGrid.jsx'), 'SourcesGrid'),
+    CegidProductsGrid: createSafeComponent(() => import('../components/grids/CegidGrid.jsx'), 'CegidProductsGrid'),
+    CmsPageGrid: createSafeComponent(() => import('../components/grids/magento/CmsPagesGrid.jsx'), 'CmsPageGrid'),
+    GridTestPage: createSafeComponent(() => import('../pages/GridTestPage.jsx'), 'GridTestPage'),
+    BugBounty: createSafeComponent(() => import('../pages/BugBountyPage.jsx'), 'BugBounty'),
+    LicenseManagement: createSafeComponent(() => import('../components/License/LicenseManagement.jsx'), 'LicenseManagement'),
+    LicenseStatus: createSafeComponent(() => import('../components/License/LicenseStatus.jsx'), 'LicenseStatus'),
+    SalesAnalytics: createSafeComponent(() => import('../components/placeholders/PlaceholderComponents.jsx').then(m => ({ default: m.SalesAnalytics })), 'SalesAnalytics'),
+    InventoryAnalytics: createSafeComponent(() => import('../components/placeholders/PlaceholderComponents.jsx').then(m => ({ default: m.InventoryAnalytics })), 'InventoryAnalytics'),
+    SecureVault: createSafeComponent(() => import('../components/placeholders/PlaceholderComponents.jsx').then(m => ({ default: m.SecureVault })), 'SecureVault'),
+    AccessControl: createSafeComponent(() => import('../components/placeholders/PlaceholderComponents.jsx').then(m => ({ default: m.AccessControl })), 'AccessControl'),
+    MDMStockGrid: createSafeComponent(() => import('../components/grids/MDMStockGrid.jsx'), 'MDMStockGrid'),
+    MDMSources: createSafeComponent(() => import('../components/placeholders/PlaceholderComponents.jsx').then(m => ({ default: m.MDMSources })), 'MDMSources'),
+    UserProfile: createSafeComponent(() => import('../components/UserProfile/index.jsx'), 'UserProfile')
 };
 
 // Create context with default values - Dashboard is always the first tab

@@ -1,9 +1,6 @@
-import React, { useState, useCallback, useEffect, useMemo } from&apos;react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Box, Chip } from '@mui/material';
 import {
-
-// StandardGridTemplate - Template for all child grids
-// This template provides a consistent structure for all grid components
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
@@ -12,7 +9,7 @@ import {
   Sync as SyncIcon
 } from '@mui/icons-material';
 import UnifiedGrid from '../../common/UnifiedGrid';
-import { toast } from&apos;react-toastify';
+import { toast } from 'react-toastify';
 
 /**
  * StandardGridTemplate - Template for consistent grid structure
@@ -32,7 +29,7 @@ import { toast } from&apos;react-toastify';
  * 12. Return JSX
  */
 
-  // const StandardGridTemplate = () => { // Unused variable
+const StandardGridTemplate = () => {
   // ===== 1. STATE MANAGEMENT =====
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -54,13 +51,14 @@ import { toast } from&apos;react-toastify';
     setLoading(true);
     try {
       // Replace with actual API call
-  // const response = await apiService.getData(); // Unused variable
-      setData(response.data || []);
+      const response = await fetch('/api/data');
+      const responseData = await response.json();
+      setData(responseData.data || []);
       
       // Calculate stats
-  // const total = response.data?.length || 0; // Unused variable
-  // const active = response.data?.filter(item => item.status === 'active').length || 0; // Unused variable
-  // const inactive = total - active; // Unused variable
+      const total = responseData.data?.length || 0;
+      const active = responseData.data?.filter(item => item.status === 'active').length || 0;
+      const inactive = total - active;
       
       setStats({ total, active, inactive });
     } catch (error) {
@@ -95,7 +93,11 @@ import { toast } from&apos;react-toastify';
 
     try {
       // Replace with actual delete API call
-      await apiService.deleteRecords(records);
+      await fetch('/api/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: records.map(r => r.id) })
+      });
       toast.success(`Deleted ${records.length} record(s)`);
       fetchData();
     } catch (error) {
@@ -107,7 +109,7 @@ import { toast } from&apos;react-toastify';
   const handleSync = useCallback(async () => {
     try {
       // Replace with actual sync API call
-      await apiService.syncData();
+      await fetch('/api/sync', { method: 'POST' });
       toast.success('Data synchronized successfully');
       fetchData();
     } catch (error) {
@@ -158,7 +160,7 @@ import { toast } from&apos;react-toastify';
   ], []);
 
   // ===== 5. TOOLBAR CONFIGURATION =====
-  // const toolbarConfig = { // Unused variable
+  const toolbarConfig = {
     showRefresh: true,
     showAdd: true,
     showEdit: true,
@@ -172,7 +174,7 @@ import { toast } from&apos;react-toastify';
     size: 'medium'
   };
 
-  // const customActions = [ // Unused variable
+  const customActions = [
     {
       label: 'Add New',
       onClick: handleAdd,
@@ -190,7 +192,7 @@ import { toast } from&apos;react-toastify';
   ];
 
   // ===== 6. CONTEXT MENU ACTIONS =====
-  // const contextMenuActions = { // Unused variable
+  const contextMenuActions = {
     view: {
       label: 'View Details',
       icon: <ViewIcon />,
@@ -210,102 +212,51 @@ import { toast } from&apos;react-toastify';
     delete: {
       label: 'Delete',
       icon: <DeleteIcon />,
-      onClick: (row) => handleDelete([row]),
-      color: 'error'
+      onClick: (row) => {
+        handleDelete([row]);
+      }
     }
   };
 
-  // ===== 7. STATS CARDS =====
-  // const statusCards = [ // Unused variable
-    {
-      title: 'Total Records',
-      value: stats.total,
-      icon: <ViewIcon />,
-      color: 'primary'
-    },
-    {
-      title: 'Active',
-      value: stats.active,
-      icon: <AddIcon />,
-      color: 'success'
-    },
-    {
-      title: 'Inactive',
-      value: stats.inactive,
-      icon: <DeleteIcon />,
-      color: 'warning'
-    }
-  ];
-
-  // ===== 8. FILTER OPTIONS =====
-  // const filterOptions = [ // Unused variable
-    { key: 'all', label: 'All Records', value: 'all' },
-    { key: 'active', label: 'Active Only', value: 'active' },
-    { key: 'inactive', label: 'Inactive Only', value: 'inactive' }
-  ];
-
-  // ===== 9. EFFECTS =====
+  // Load data on component mount
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // ===== 10. RENDER =====
+  // ===== 7. RENDER =====
   return (
     <Box sx={{ height: '100%', width: '100%' }}>
       <UnifiedGrid
-        gridName="StandardGrid&quot;columns={columns}
+        columns={columns}
         data={data}
         loading={loading}
-        
-        // Feature toggles
-        enableCache={true}
-        enableI18n={true}
-        enableRTL={false}
-        enableSelection={true}
-        enableSorting={true}
-        enableFiltering={true}
-        enableColumnReordering={true}
-        enableColumnResizing={true}
-        
-        // View options
-        showStatsCards={true}
-        showCardView={true}
-        defaultViewMode="grid&quot;gridCards={statusCards}
-        totalCount={stats.total}
-        defaultPageSize={25}
-        
-        // Toolbar configuration
+        onSelectionChange={setSelectedRows}
         toolbarConfig={toolbarConfig}
         customActions={customActions}
-        
-        // Context menu
         contextMenuActions={contextMenuActions}
-        
-        // Filter configuration
-        filterOptions={filterOptions}
-        currentFilter={currentFilter}
-        onFilterChange={handleFilterChange}
-        
-        // Event handlers
         onRefresh={fetchData}
         onAdd={handleAdd}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onSync={handleSync}
-        onSelectionChange={setSelectedRows}
-        onExport={(exportData, selectedRows) => {
-          console.log('Exporting data:', exportData);
-          toast.success(`Exported ${exportData.length} records`);
-        }}
-        
-        // Row configuration
-        getRowId={(row) => row.id}
-        
-        // Error handling
-        onError={(error) => toast.error(error.message)}
+        onEdit={() => handleEdit(selectedRows)}
+        onDelete={() => handleDelete(selectedRows)}
+        showStatsCards={true}
+        gridCards={[
+          {
+            title: 'Total Records',
+            value: stats.total,
+            color: 'primary'
+          },
+          {
+            title: 'Active',
+            value: stats.active,
+            color: 'success'
+          },
+          {
+            title: 'Inactive',
+            value: stats.inactive,
+            color: 'error'
+          }
+        ]}
       />
-
-      {/* Add your dialogs and other components here */}
     </Box>
   );
 };

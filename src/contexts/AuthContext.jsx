@@ -1,8 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import {
-
-
     GoogleAuthProvider,
     signInWithPopup,
     signOut,

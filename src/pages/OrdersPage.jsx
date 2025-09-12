@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Paper, Box, Chip, Typography, Alert } from '@mui/material';
 import { motion } from 'framer-motion';
 import { PriorityHigh, Warning } from '@mui/icons-material';
-import OrdersGrid from '../components/grids/OrdersGrid';
+import OrdersGrid from '../components/grids/magento/OrdersGrid';
 import { useDashboardParams } from '../hooks/useHashParams';
 
 const OrdersPage = () => {

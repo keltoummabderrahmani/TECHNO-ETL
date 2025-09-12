@@ -686,8 +686,8 @@ export function useMDMGrid(gridName, dataFetcher, options = {}) {
 }
 
 /**
- * Enhanced Factory function to create appropriate grid hook
- * Provides type safety and better error handling
+ * Enhanced Factory function to create grid configurations
+ * Use this to get the appropriate grid hook function
  */
 export function createGridHook(gridType, gridName, dataFetcher, options = {}) {
   // Validate inputs
@@ -708,24 +708,35 @@ export function createGridHook(gridType, gridName, dataFetcher, options = {}) {
 
   console.log(`🏭 Grid Factory: Creating ${gridType} grid hook for ${gridName}`);
 
+  // Return the appropriate hook function and parameters
   switch (gridType.toLowerCase()) {
     case 'magento':
       console.log(`📭 Creating Magento grid hook with options:`, options);
-      return useMagentoGrid(gridName, dataFetcher, options);
+      return {
+        hookFunction: useMagentoGrid,
+        params: [gridName, dataFetcher, options]
+      };
       
     case 'mdm':
       console.log(`📊 Creating MDM grid hook with options:`, options);
-      return useMDMGrid(gridName, dataFetcher, options);
+      return {
+        hookFunction: useMDMGrid,
+        params: [gridName, dataFetcher, options]
+      };
       
     case 'base':
     case 'default':
-    default:
+    default: {
       if (gridType !== 'base' && gridType !== 'default') {
         console.warn(`Unknown grid type: ${gridType}, falling back to base grid`);
       }
       console.log(`📊 Creating base grid hook with options:`, options);
       const config = new BaseGridConfig(gridName, options);
-      return useBaseGrid(config, dataFetcher);
+      return {
+        hookFunction: useBaseGrid,
+        params: [config, dataFetcher]
+      };
+    }
   }
 }
 

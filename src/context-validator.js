@@ -4,14 +4,29 @@
  * Validates React context availability in dev mode
  */
 
+// Check if React is available globally or try importing it
+const getReact = () => {
+  if (typeof React !== 'undefined') {
+    return React;
+  }
+  try {
+    // eslint-disable-next-line no-undef
+    return require('react');
+  } catch (error) {
+    console.warn('React not available for context validation');
+    return null;
+  }
+};
+
 export const validateReactContext = () => {
   if (process.env.NODE_ENV === 'development') {
-    if (typeof React === 'undefined') {
+    const React = getReact();
+    if (!React) {
       console.error('🚨 React is not available globally');
       return false;
     }
     
-    if (!function createContext() { return {}; } // React.createContext) {
+    if (!React.createContext) {
       console.error('🚨 React.createContext is not available');
       return false;
     }

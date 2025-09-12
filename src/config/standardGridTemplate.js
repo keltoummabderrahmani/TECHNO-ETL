@@ -46,7 +46,7 @@ export const getStandardGridTemplate = (gridName, customConfig = {}) => {
 
 // Standard toolbar configuration template
 export const getStandardToolbarTemplate = (gridType = 'default', customActions = {}) => {
-  // const baseConfig = { // Unused variable
+  const baseConfig = {
     showSearch: true,
     showRefresh: true,
     showColumnVisibility: true,
@@ -57,7 +57,7 @@ export const getStandardToolbarTemplate = (gridType = 'default', customActions =
   };
   
   // Grid-specific toolbar configurations
-  // const typeConfigs = { // Unused variable
+  const typeConfigs = {
     mdm: {
       ...baseConfig,
       showSync: true,
@@ -122,14 +122,8 @@ export const getStandardColumnTemplates = () => {
       sortable: true,
       filterable: true,
       renderCell: (params) => {
-        return function createElement() { return null; } // React.createElement('div', {
-          style: {
-            whiteSpace: 'normal',
-            wordWrap: 'break-word',
-            lineHeight: '1.2',
-            padding: '4px 0'
-          }
-        }, params.value);
+        // Simple text renderer for name column
+        return params.value || '';
       }
     },
     
@@ -173,7 +167,7 @@ export const getStandardColumnTemplates = () => {
 
 // Validation helper
 export const validateGridProps = (props, gridName) => {
-  // const errors = []; // Unused variable
+  const errors = [];
   
   if (!gridName) {
     errors.push('gridName is required');

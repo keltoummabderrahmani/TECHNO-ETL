@@ -449,6 +449,7 @@ class BulkUploadValidationService {
     };
 
     // Check for special characters that might cause issues
+    // eslint-disable-next-line no-control-regex
     const problematicChars = /[<>:"/\\|?*\x00-\x1f]/;
     if (problematicChars.test(filename)) {
       result.warnings.push({

@@ -6,10 +6,18 @@
 
 // Environment variable defaults
 const getEnvDefault = (key, fallback = '') => {
-  if (typeof import !== 'undefined' && import.meta?.env) {
-    return import.meta.env[key] || fallback;
+  // Check if we're in a Vite environment with import.meta
+  if (typeof window !== 'undefined' && window.location) {
+    // Browser environment - check for Vite's import.meta.env
+    try {
+      // eslint-disable-next-line no-undef
+      return import.meta?.env?.[key] || fallback;
+    } catch {
+      // Fall back to process.env for Node.js environments
+      return process.env?.[key] || fallback;
+    }
   }
-  return fallback;
+  return process.env?.[key] || fallback;
 };
 
 /**

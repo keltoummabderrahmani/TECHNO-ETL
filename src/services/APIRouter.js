@@ -9,5 +9,34 @@
  * @author TECHNO-ETL Team
  */
 
-import { BaseApiService } from './BaseApiService';
-import { getUnifiedSettings, getUserSetting
+// Import services with fallback error handling
+let BaseApiService;
+try {
+  BaseApiService = require('./BaseApiService').BaseApiService || class {};
+} catch {
+  BaseApiService = class {
+    constructor() {
+      console.warn('BaseApiService not available');
+    }
+  };
+}
+
+/**
+ * API Router for managing multiple API endpoints
+ */
+export class APIRouter {
+  constructor() {
+    this.routes = new Map();
+    this.defaultService = new BaseApiService();
+  }
+
+  register(name, service) {
+    this.routes.set(name, service);
+  }
+
+  get(name) {
+    return this.routes.get(name) || this.defaultService;
+  }
+}
+
+export default new APIRouter();
